@@ -4,11 +4,21 @@ import { getDirectDownloadUrl } from "@/lib/youtube";
 
 export async function POST(request: Request) {
   try {
-    const { url, itag } = await request.json();
-
-    if (!url || !itag) {
+    let body;
+    try {
+      body = await request.json();
+    } catch {
       return NextResponse.json(
-        { error: "URL and format (itag) are required" },
+        { error: "Neplatný JSON v requestu." },
+        { status: 400 }
+      );
+    }
+
+    const { url, itag } = body;
+
+    if (!url || itag === undefined || itag === null) {
+      return NextResponse.json(
+        { error: "URL a formát (itag) jsou vyžadovány." },
         { status: 400 }
       );
     }
